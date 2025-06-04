@@ -1,102 +1,77 @@
-# A simple chat application using Rust language
+# Simple Chat Application in Rust
 
-A lightweight command-line chat application built using **Rust**, **WebSockets**, and **SQLite**. This app supports private messaging, message history logging, keyword search, and concurrent user handling — all from the terminal!
-
----
+A lightweight command-line chat application built using **Rust**, **WebSockets**, and **SQLite**. This app supports private messaging, chat history, keyword search, and real-time communication — all from the terminal!
 
 ## Features
 
-- Users can **send and receive messages** in real time
-- Supports **private messaging** with `/msg username your message`
-- Persists **chat history** to a local SQLite database
-- View **message history** with `/history`
-- **Search messages** by keyword with `/search keyword`
-- Built with **asynchronous concurrency** using `tokio`
-- Uses **structs and enums** for clean message representation
-- Ensures **memory safety** with `Arc<Mutex<>>` patterns
-
----
+-  Users can send and receive messages in real time
+-  Private messaging with `/msg username your message`
+-  Persists chat history in a local SQLite database
+-  View recent messages with `/history`
+-  Search messages by keyword using `/search keyword`
+-  Built with asynchronous concurrency via `tokio`
+-  Uses enums and structs for message structure
+-  Thread-safe memory access via `Arc<Mutex<>>`
 
 ## How to Run
 
 ### Prerequisites
-Ensure you have [Rust installed](https://www.rust-lang.org/tools/install) on your system.
+
+- Ensure [Rust](https://www.rust-lang.org/tools/install) is installed on your system.
 
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/dennyboechat/chat_app_rust
+git clone https://github.com/yourusername/chat_app_rust.git
 cd chat_app_rust
-cargo build
-cargo run -- server (Run the server)
-cargo run -- client (Run the client -- in separate terminal)
+```
 
+### Build and Run
 
-Usage
-Once the client is running, interact through the command line:
+In one terminal (for the server):
 
-Send a public message: Just type your message and press Enter
+```bash
+cargo run -- server
+```
 
-Send a private message:
-/msg username Hello!
+In another terminal (for a client):
 
-View recent message history:
-/history
+```bash
+cargo run -- client
+```
 
-Search messages by keyword:
-/search hello
+## Usage
 
+Once inside the client terminal:
 
-## Structure  
--	Database to store chat history
--  -	timestamp and user ID
--	Memory safety model
--	Enums
--	Structs for message types
--   Async concurrency for message handling
+- Send a public message: just type and hit Enter
+- Send a private message: `/msg username Hello there!`
+- View message history: `/history`
+- Search messages: `/search hello`
 
-## Manageable components
-These components were clearly separated, modular, and easy to manage:
+## Structure
 
-Server and Client separation
-Handled via clap subcommands (server and client), allowing clear execution paths.
+- `ChatMessage` enum: Clean and unified message format
+- SQLite-backed persistence: All messages are logged to `chat_history.db`
+- Timestamps and user IDs are stored for traceability
+- `Arc<Mutex<>>`: Ensures thread-safe shared state
+- `tokio`: Powers async runtime for multiple clients
 
-ChatMessage enum
-Unified message logic under ChatMessage enum, handling both public and private messages with consistent structure.
+## Manageable Components
 
-SQLite logging
-Logging messages to the chat_history.db via simple function call log_to_db(), with timestamp and message type.
-
-User sender map
-Concurrent HashMap<String, Sender> wrapped in Arc<Mutex<>> allowed safe tracking of active users.
-
-Modular async tasks
-Used tokio::spawn to separate sending and receiving tasks cleanly.
-
-Command Parsing
-Parsing commands like /msg, /history, and /search made the chat input experience flexible and intuitive.
-
-Learning curve of crates
-Integrating crates like tokio-tungstenite, rusqlite, and clap together in one project required reading documentation and trial-error.
+- Server and client separated via `clap` subcommands
+- Modular message handling via `ChatMessage` enum
+- Message logging is abstracted via `.log_to_db()` method
+- Concurrent user sessions handled with `Arc<Mutex<HashMap>>`
+- Async I/O separated into tasks via `tokio::spawn`
+- Simple and extensible command parser (`/msg`, `/history`, `/search`)
 
 ## Challenges
-These parts of the project involved notable complexity or learning:
 
-Handling async message flow
-Managing concurrent reads/writes over WebSockets required careful use of split() and tokio::spawn.
+- Managing WebSocket async streams (read/write split)
+- Borrow checker issues (ownership of WebSocket writer)
+- Thread-safe access to database and user state
+- Integration of multiple crates (`tokio`, `rusqlite`, `tokio-tungstenite`)
+- Manual multi-client testing in separate terminals
 
-Sharing mutable state safely
-Ensuring thread-safe access to the user_senders map required learning Arc<Mutex<>> patterns in Rust.
-
-Borrow checker conflicts
-Ran into ownership and move issues especially with ws_sender due to its non-Copy type. Refactoring was needed to avoid double borrows.
-
-SQLite database access
-Ensuring synchronous database calls inside async context needed wrapping in Arc<Mutex<>> and careful management of DB locks.
-
-Testing multi-client interaction
-Manually running multiple terminals for server/client instances made it harder to automate tests for features like private messages or search.
-
-Learning curve of crates
-Integrating crates like tokio-tungstenite, rusqlite, and clap together in one project required reading documentation and trial-error.
-
+---
