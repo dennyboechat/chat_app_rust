@@ -22,7 +22,7 @@ A lightweight command-line chat application built using **Rust**, **WebSockets**
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/chat_app_rust.git
+git clone https://github.com/dennyboechat/chat_app_rust.git
 cd chat_app_rust
 ```
 
