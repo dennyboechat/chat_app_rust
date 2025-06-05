@@ -24,6 +24,7 @@ A lightweight command-line chat application built using **Rust**, **WebSockets**
 ```bash
 git clone https://github.com/dennyboechat/chat_app_rust.git
 cd chat_app_rust
+cargo build
 ```
 
 ### Build and Run
